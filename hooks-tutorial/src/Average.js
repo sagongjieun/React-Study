@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 
 const getAverage = (numbers) => {
   console.log("평균값 계산중...");
@@ -13,14 +13,19 @@ const Average = () => {
   const [list, setList] = useState([]);
   const [number, setNumber] = useState("");
 
-  const onChangeInput = (e) => {
+  // useCallback 을 통해 만들어 놨던 함수를 재사용함으로서 성능을 최적화 할 수 있음
+  const onChangeInput = useCallback((e) => {
     setNumber(e.target.value);
-  };
-  const onInsertNumber = () => {
-    const nextList = list.concat(parseInt(number));
-    setList(nextList);
-    setNumber("");
-  };
+  }, []); // 컴포넌트가 처음 렌더링될 때만 함수 생성
+  const onInsertNumber = useCallback(
+    (e) => {
+      const nextList = list.concat(parseInt(number));
+      setList(nextList);
+      setNumber("");
+    },
+    // number 혹은 list가 바뀌었을 때만 함수 생성
+    [number, list]
+  );
 
   // 두 번째 인자에 넣어준 배열의 값이 바뀔때만 함수가 실행됨
   // 그렇지 않으면 이전에 연산했던 결과를 다시 사용함으로서 성능을 최적화 할 수 있음
