@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useRef } from "react";
 
 const getAverage = (numbers) => {
   console.log("평균값 계산중...");
@@ -12,6 +12,7 @@ const getAverage = (numbers) => {
 const Average = () => {
   const [list, setList] = useState([]);
   const [number, setNumber] = useState("");
+  const focusingInput = useRef(null); // useRef를 통해 만든 객체 안의 current 값이 실제 엘리먼트를 가리키게 됨 (focusingInput과 연결된 DOM)
 
   // useCallback 을 통해 만들어 놨던 함수를 재사용함으로서 성능을 최적화 할 수 있음
   const onChangeInput = useCallback((e) => {
@@ -22,6 +23,7 @@ const Average = () => {
       const nextList = list.concat(parseInt(number));
       setList(nextList);
       setNumber("");
+      focusingInput.current.focus();
     },
     // number 혹은 list가 바뀌었을 때만 함수 생성
     [number, list]
@@ -33,7 +35,11 @@ const Average = () => {
 
   return (
     <div>
-      <input value={number} onChange={onChangeInput}></input>
+      <input
+        value={number}
+        onChange={onChangeInput}
+        ref={focusingInput}
+      ></input>
       <button onClick={onInsertNumber}>등록</button>
       <ul>
         {list.map((value, index) => (
